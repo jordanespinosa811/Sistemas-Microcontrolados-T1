@@ -1,0 +1,39 @@
+import network
+import socket
+import time
+import dht
+from machine import Pin
+import gc
+
+
+gc.collect()
+
+
+wlan = network.WLAN(network .STA_IF)
+wlan.active(False)
+time.sleep(0.1)
+wlan.active(True)
+wlan.connect("Jordan","Jordan2024")
+
+print("Conectado como sensor 5...")
+while not wlan.isconnected():
+    time.sleep(0.5)
+print("Sensor1 conectado.IP:",wlan.ifconfig()[0])
+
+d = dht.DHT11(Pin(14))
+
+while True:
+    try:
+        d.measure()
+        temp = d.temperature()
+        hum = d.humidity()
+        payload = f"sensor5:{temp},{hum}"
+        
+        s = socket.socket()
+        s.connect(("192.168.4.1",8888))
+        s.send(payload.encode())
+        s.close()
+        print(f"sensor5 enviado: {temp}°C,{hum}%")
+    except  Exception  as e:
+        print("sensor5 error:",e)
+    time.sleep(5)
